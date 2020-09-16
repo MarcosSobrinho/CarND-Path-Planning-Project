@@ -96,7 +96,7 @@ int main() {
           constexpr double dist_inc{0.4};
 
           for (int i = 1; i <= 50; ++i){
-            auto xy_coords = getXY(car_s + dist_inc*i, car_s, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+            auto xy_coords = getXY(car_s + dist_inc*i, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
             next_x_vals.push_back(xy_coords[0]);
             next_y_vals.push_back(xy_coords[1]);
           }
