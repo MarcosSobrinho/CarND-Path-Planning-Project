@@ -94,11 +94,12 @@ int main() {
           vector<double> next_x_vals;
           vector<double> next_y_vals;
 
-          constexpr double dist_inc{0.5};
+          constexpr double dist_inc{0.3};
           constexpr double pts_per_s{50.0};
           constexpr double ref_vel{dist_inc*pts_per_s};
 
           const int prev_size = previous_path_x.size();
+          int lane = 1;
 
           //create space of ref points
           vector<double> ptsx;
@@ -109,8 +110,8 @@ int main() {
           double ref_yaw = deg2rad(car_yaw);
 
           if (prev_size < 2){
-            const double prev_car_x = car_x - cos(car_yaw);
-            const double prev_car_y = car_y - sin(car_yaw);
+            double prev_car_x = car_x - cos(car_yaw);
+            double prev_car_y = car_y - sin(car_yaw);
 
             ptsx.push_back(prev_car_x);
             ptsx.push_back(car_x);
@@ -134,9 +135,9 @@ int main() {
             ptsy.push_back(ref_y);
           }
 
-          auto next_wp0 = getXY(car_s+30.0, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-          auto next_wp1 = getXY(car_s+60.0, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-          auto next_wp2 = getXY(car_s+90.0, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          auto next_wp0 = getXY(car_s+30.0, 6.0, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          auto next_wp1 = getXY(car_s+60.0, 6.0, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          auto next_wp2 = getXY(car_s+90.0, 6.0, map_waypoints_s, map_waypoints_x, map_waypoints_y);
 
           ptsx.push_back(next_wp0[0]);
           ptsx.push_back(next_wp1[0]);
@@ -165,6 +166,7 @@ int main() {
           double target_x = 30.0;
           double target_y = s(target_x);
           double target_dist = sqrt(target_x*target_x + target_y*target_y);
+
           double N = target_dist / (0.02*ref_vel);
           double x_add_on = 0.0;
 
@@ -179,7 +181,7 @@ int main() {
             double y_ref = y_point;
 
             x_point = x_ref*cos(ref_yaw) - y_ref*sin(ref_yaw);
-            y_point = x_ref*sin(ref_yaw) - y_ref*cos(ref_yaw);
+            y_point = x_ref*sin(ref_yaw) + y_ref*cos(ref_yaw);
 
             x_point += ref_x;
             y_point += ref_y;
