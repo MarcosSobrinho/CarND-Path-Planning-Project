@@ -181,7 +181,8 @@ vector<double> JMT(vector<double> &start, vector<double> &end, double T) {
        end[1]-(start[1]+start[2]*T),
        end[2]-start[2];
           
-  MatrixXd Ai = A.inverse();
+  //MatrixXd Ai = A.inverse();
+  MatrixXd Ai = A;
   
   MatrixXd C = Ai*B;
   
