@@ -256,8 +256,20 @@ void StartingPoints_Spline(const LocalizationData& car, const PreviousPath& prev
   }
 }
 
-void EndPoints_Spline(){
+void EndPoints_Spline(const LocalizationData& car, const double& lane, const MapWaypoints& map_waypoints, vector<double>& ptsx, vector<double>& ptsy){
+  const double lane_d = 2.0 + 4.0*lane;
 
+  auto next_wp0 = getXY(car.s+30.0, lane_d, map_waypoints.s, map_waypoints.x, map_waypoints.y);
+  auto next_wp1 = getXY(car.s+60.0, lane_d, map_waypoints.s, map_waypoints.x, map_waypoints.y);
+  auto next_wp2 = getXY(car.s+90.0, lane_d, map_waypoints.s, map_waypoints.x, map_waypoints.y);
+
+  ptsx.push_back(next_wp0[0]);
+  ptsx.push_back(next_wp1[0]);
+  ptsx.push_back(next_wp2[0]);
+
+  ptsy.push_back(next_wp0[1]);
+  ptsy.push_back(next_wp1[1]);
+  ptsy.push_back(next_wp2[1]);
 }
 
 #endif  // HELPERS_H
