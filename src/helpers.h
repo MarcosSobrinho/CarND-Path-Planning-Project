@@ -171,8 +171,8 @@ struct LocalizationData{
 struct PreviousPath{
   vector<double> x;
   vector<double> y;
-  unsinged int size;
-}
+  unsigned int size;
+};
 
 vector<double> JMT(vector<double> &start, vector<double> &end, double T) {
   /**
