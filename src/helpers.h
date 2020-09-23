@@ -159,6 +159,21 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s,
   return {x,y};
 }
 
+struct LocalizationData{
+  double x;
+  double y;
+  double s;
+  double d;
+  double yaw;
+  double speed;
+};
+
+struct PreviousPath{
+  vector<double> x;
+  vector<double> y;
+  unsinged int size;
+}
+
 vector<double> JMT(vector<double> &start, vector<double> &end, double T) {
   /**
    * @param start - the vehicles start location given as a length three array

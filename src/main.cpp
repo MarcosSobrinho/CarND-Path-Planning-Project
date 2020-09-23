@@ -75,12 +75,13 @@ int main() {
           // j[1] is the data JSON object
           
           // Main car's localization Data
-          double car_x = j[1]["x"];
-          double car_y = j[1]["y"];
-          double car_s = j[1]["s"];
-          double car_d = j[1]["d"];
-          double car_yaw = j[1]["yaw"];
-          double car_speed = j[1]["speed"];
+          LocalizationData car;
+          car.x = j[1]["x"];
+          car.y = j[1]["y"];
+          car.s = j[1]["s"];
+          car.d = j[1]["d"];
+          car.yaw = j[1]["yaw"];
+          car.speed = j[1]["speed"];
 
           // Previous path data given to the Planner
           auto previous_path_x = j[1]["previous_path_x"];
@@ -100,7 +101,7 @@ int main() {
 
           const int prev_size = previous_path_x.size();
 
-          if(prev_size > 0) car_s = end_path_s;
+          if(prev_size > 0) car.s = end_path_s;
           bool too_close = false;
 
           for(int i=0; i<sensor_fusion.size(); ++i){
@@ -114,7 +115,7 @@ int main() {
 
               check_car_s += 0.02 * check_speed * prev_size;
               // if speed is smaller than mine, go slower
-              if ((check_car_s > car_s) && ((check_car_s - car_s) < 30.0)) 
+              if ((check_car_s > car.s) && ((check_car_s - car.s) < 30.0))
               too_close = true;
               
             }
@@ -127,29 +128,14 @@ int main() {
           vector<double> ptsx;
           vector<double> ptsy;
 
-          double ref_x = car_x;
-          double ref_y = car_y;
-          double ref_yaw = deg2rad(car_yaw);
-
           if (prev_size < 2){
-            //double prev_car_x = car_x - cos(car_yaw);
-            //double prev_car_y = car_y - sin(car_yaw);
+            ptsx.push_back(car.x - cos(car.yaw));
+            ptsx.push_back(car.x);
 
-            ptsx.push_back(car_x - cos(car_yaw));
-            ptsx.push_back(car_x);
-
-            ptsy.push_back(car_y - sin(car_yaw));
-            ptsy.push_back(car_y);
+            ptsy.push_back(car.y - sin(car.yaw));
+            ptsy.push_back(car.y);
           }
-
           else{
-            //ref_x = previous_path_x[prev_size-1];
-            //ref_y = previous_path_y[prev_size-1];
-
-            //double ref_x_prev =  previous_path_x[prev_size-2];
-            //double ref_y_prev =  previous_path_y[prev_size-2];
-            //ref_yaw = atan2(ref_y - ref_y_prev, ref_x - ref_x_prev);
-
             ptsx.push_back(previous_path_x[prev_size-2]);
             ptsx.push_back(previous_path_x[prev_size-1]);
 
@@ -158,13 +144,12 @@ int main() {
           }
 
           const double ref_yaw = atan2(ptsy[1] - ptsy[0], ptsx[1] - ptsx[0]);
-
           CoordinateTransform transform(ptsx[1], ptsy[1], ref_yaw);
 
           double lane_d = 2.0 + 4.0*lane;
-          auto next_wp0 = getXY(car_s+30.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-          auto next_wp1 = getXY(car_s+60.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-          auto next_wp2 = getXY(car_s+90.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          auto next_wp0 = getXY(car.s+30.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          auto next_wp1 = getXY(car.s+60.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          auto next_wp2 = getXY(car.s+90.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
 
           ptsx.push_back(next_wp0[0]);
           ptsx.push_back(next_wp1[0]);
