@@ -127,6 +127,8 @@ int main() {
           vector<double> ptsx;
           vector<double> ptsy;
 
+          CoordinateTransform transform(car_x, car_y, deg2rad(car_yaw));
+
           double ref_x = car_x;
           double ref_y = car_y;
           double ref_yaw = deg2rad(car_yaw);
