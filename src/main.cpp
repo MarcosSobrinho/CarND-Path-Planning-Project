@@ -51,6 +51,10 @@ int main() {
     map_waypoints_dy.push_back(d_y);
   }
 
+  constexpr double pts_per_s{50.0};
+  double ref_vel{0.0};
+  double lane = 1.0;
+
   h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,
                &map_waypoints_dx,&map_waypoints_dy]
               (uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
@@ -94,12 +98,31 @@ int main() {
           vector<double> next_x_vals;
           vector<double> next_y_vals;
 
-          constexpr double dist_inc{0.3};
-          constexpr double pts_per_s{50.0};
-          constexpr double ref_vel{dist_inc*pts_per_s};
-
           const int prev_size = previous_path_x.size();
-          int lane = 1;
+
+          if(prev_size > 0) car_s = end_path_s;
+          bool too_close = false;
+
+          for(int i=0; i<sensor_fusion.size(); ++i){
+            double d = sensor_fusion[i][6];
+            // if car is in my lane, check the speed
+            if((d < (2.0 + 4.0*lane + 2.0)) && ((d > (2.0 + 4.0*lane - 2.0))){
+              double vx = sensor_fusion[i][3];
+              double vy = sensor_fusion[i][4];
+              double check_speed = sqrt(vx*vx+vy*vy);
+              double check_car_s = sensor_fusion[i][5];
+
+              check_car_s += 0.02 * check_speed * prev_size;
+              // if speed is smaller than mine, go slower
+              if ((check_car_s > car_s) && ((check_car_s - car_s) < 30.0)) 
+              too_close = true;
+              
+            }
+          }
+
+          if (too_close) dist_inc -= 0.1;
+          else if(dist_inc < 0.45) dist_inc += 0.1;
+          ref_vel = dist_inc*pts_per_s;
 
           //create space of ref points
           vector<double> ptsx;
@@ -135,9 +158,10 @@ int main() {
             ptsy.push_back(ref_y);
           }
 
-          auto next_wp0 = getXY(car_s+30.0, 6.0, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-          auto next_wp1 = getXY(car_s+60.0, 6.0, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-          auto next_wp2 = getXY(car_s+90.0, 6.0, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          double lane_d = 2.0 + 4.0*lane;
+          auto next_wp0 = getXY(car_s+30.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          auto next_wp1 = getXY(car_s+60.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          auto next_wp2 = getXY(car_s+90.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
 
           ptsx.push_back(next_wp0[0]);
           ptsx.push_back(next_wp1[0]);
