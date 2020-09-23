@@ -229,8 +229,23 @@ class CoordinateTransform{
     x = x_ + m_x;
     y = y_ + m_y;
   }
-
 };
 
+void StartingPoints_Spline(const PreviousPath& prev, vector<double>& ptsx, vector<double>& ptsy){
+  if (prev.size < 2){
+    ptsx.push_back(car.x - cos(car.yaw));
+    ptsx.push_back(car.x);
+
+    ptsy.push_back(car.y - sin(car.yaw));
+    ptsy.push_back(car.y);
+  }
+  else{
+    ptsx.push_back(prev.x[prev.size-2]);
+    ptsx.push_back(prev.x[prev.size-1]);
+    
+    ptsy.push_back(prev.y[prev.size-2]);
+    ptsy.push_back(prev.y[prev.size-1]);
+  }
+}
 
 #endif  // HELPERS_H

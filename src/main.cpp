@@ -131,20 +131,7 @@ int main() {
           vector<double> ptsx;
           vector<double> ptsy;
 
-          if (prev.size < 2){
-            ptsx.push_back(car.x - cos(car.yaw));
-            ptsx.push_back(car.x);
-
-            ptsy.push_back(car.y - sin(car.yaw));
-            ptsy.push_back(car.y);
-          }
-          else{
-            ptsx.push_back(prev.x[prev.size-2]);
-            ptsx.push_back(prev.x[prev.size-1]);
-
-            ptsy.push_back(prev.y[prev.size-2]);
-            ptsy.push_back(prev.y[prev.size-1]);
-          }
+          StartingPoints_Spline(prev, ptsx, ptsy);
 
           const double ref_yaw = atan2(ptsy[1] - ptsy[0], ptsx[1] - ptsx[0]);
           CoordinateTransform transform(ptsx[1], ptsy[1], ref_yaw);
