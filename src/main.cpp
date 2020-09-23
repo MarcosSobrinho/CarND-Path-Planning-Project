@@ -131,7 +131,7 @@ int main() {
           vector<double> ptsx;
           vector<double> ptsy;
 
-          StartingPoints_Spline(prev, ptsx, ptsy);
+          StartingPoints_Spline(car, prev, ptsx, ptsy);
 
           const double ref_yaw = atan2(ptsy[1] - ptsy[0], ptsx[1] - ptsx[0]);
           CoordinateTransform transform(ptsx[1], ptsy[1], ref_yaw);

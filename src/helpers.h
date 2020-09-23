@@ -231,7 +231,7 @@ class CoordinateTransform{
   }
 };
 
-void StartingPoints_Spline(const PreviousPath& prev, vector<double>& ptsx, vector<double>& ptsy){
+void StartingPoints_Spline(const LocalizationData& car, const PreviousPath& prev, vector<double>& ptsx, vector<double>& ptsy){
   if (prev.size < 2){
     ptsx.push_back(car.x - cos(car.yaw));
     ptsx.push_back(car.x);
