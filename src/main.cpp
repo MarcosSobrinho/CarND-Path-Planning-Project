@@ -84,8 +84,11 @@ int main() {
           car.speed = j[1]["speed"];
 
           // Previous path data given to the Planner
-          auto previous_path_x = j[1]["previous_path_x"];
-          auto previous_path_y = j[1]["previous_path_y"];
+          PreviousPath prev;
+          for (const auto& elem : j[1]["previous_path_x"]) prev.x.push_back(elem);
+          for (const auto& elem : j[1]["previous_path_y"]) prev.y.push_back(elem);
+          prev.size = prev.x.size();
+
           // Previous path's end s and d values 
           double end_path_s = j[1]["end_path_s"];
           double end_path_d = j[1]["end_path_d"];
@@ -99,9 +102,9 @@ int main() {
           vector<double> next_x_vals;
           vector<double> next_y_vals;
 
-          const int prev_size = previous_path_x.size();
+          //const int prev_size = previous_path_x.size();
 
-          if(prev_size > 0) car.s = end_path_s;
+          if(prev.size > 0) car.s = end_path_s;
           bool too_close = false;
 
           for(int i=0; i<sensor_fusion.size(); ++i){
@@ -113,7 +116,7 @@ int main() {
               double check_speed = sqrt(vx*vx+vy*vy);
               double check_car_s = sensor_fusion[i][5];
 
-              check_car_s += 0.02 * check_speed * prev_size;
+              check_car_s += 0.02 * check_speed * prev.size;
               // if speed is smaller than mine, go slower
               if ((check_car_s > car.s) && ((check_car_s - car.s) < 30.0))
               too_close = true;
@@ -128,7 +131,7 @@ int main() {
           vector<double> ptsx;
           vector<double> ptsy;
 
-          if (prev_size < 2){
+          if (prev.size < 2){
             ptsx.push_back(car.x - cos(car.yaw));
             ptsx.push_back(car.x);
 
@@ -136,11 +139,11 @@ int main() {
             ptsy.push_back(car.y);
           }
           else{
-            ptsx.push_back(previous_path_x[prev_size-2]);
-            ptsx.push_back(previous_path_x[prev_size-1]);
+            ptsx.push_back(prev.x[prev.size-2]);
+            ptsx.push_back(prev.x[prev.size-1]);
 
-            ptsy.push_back(previous_path_y[prev_size-2]);
-            ptsy.push_back(previous_path_y[prev_size-1]);
+            ptsy.push_back(prev.y[prev.size-2]);
+            ptsy.push_back(prev.y[prev.size-1]);
           }
 
           const double ref_yaw = atan2(ptsy[1] - ptsy[0], ptsx[1] - ptsx[0]);
@@ -165,9 +168,9 @@ int main() {
           tk::spline s;
           s.set_points(ptsx, ptsy);
 
-          for(int i=0; i<prev_size; ++i){
-            next_x_vals.push_back(previous_path_x[i]);
-            next_y_vals.push_back(previous_path_y[i]);
+          for(int i=0; i<prev.size; ++i){
+            next_x_vals.push_back(prev.x[i]);
+            next_y_vals.push_back(prev.y[i]);
           }
 
           double target_x = 30.0;
@@ -177,7 +180,7 @@ int main() {
           double D = target_dist / (0.02*ref_vel);
           double x_add_on = 0.0;
 
-          for (int i=1; i<= 50-prev_size; ++i){
+          for (int i=1; i<= 50-prev.size; ++i){
 
             double x_point = x_add_on+target_x/D;
             double y_point = s(x_point);
