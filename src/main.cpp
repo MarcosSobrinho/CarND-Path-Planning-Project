@@ -94,9 +94,6 @@ int main() {
 
           json msgJson;
 
-          vector<double> next_x_vals;
-          vector<double> next_y_vals;
-
           //const int prev_size = previous_path_x.size();
 
           if(prev.size > 0) car.s = end_path_s;
@@ -132,31 +129,14 @@ int main() {
           const double ref_yaw = atan2(ptsy[1] - ptsy[0], ptsx[1] - ptsx[0]);
           CoordinateTransform transform(ptsx[1], ptsy[1], ref_yaw);
 
-          /*
-          double lane_d = 2.0 + 4.0*lane;
-          auto next_wp0 = getXY(car.s+30.0, lane_d, map_waypoints.s, map_waypoints.x, map_waypoints.y);
-          auto next_wp1 = getXY(car.s+60.0, lane_d, map_waypoints.s, map_waypoints.x, map_waypoints.y);
-          auto next_wp2 = getXY(car.s+90.0, lane_d, map_waypoints.s, map_waypoints.x, map_waypoints.y);
-
-          ptsx.push_back(next_wp0[0]);
-          ptsx.push_back(next_wp1[0]);
-          ptsx.push_back(next_wp2[0]);
-
-          ptsy.push_back(next_wp0[1]);
-          ptsy.push_back(next_wp1[1]);
-          ptsy.push_back(next_wp2[1]);
-          */
-
           for(int i=0; i < ptsx.size(); ++i) 
           transform.ToVehicleCoord(ptsx[i], ptsy[i]);
 
           tk::spline s;
           s.set_points(ptsx, ptsy);
 
-          for(int i=0; i<prev.size; ++i){
-            next_x_vals.push_back(prev.x[i]);
-            next_y_vals.push_back(prev.y[i]);
-          }
+          vector<double> next_x_vals{std::move(prev.x)};
+          vector<double> next_y_vals{std::move(prev.y)};
 
           double target_x = 30.0;
           double target_y = s(target_x);
