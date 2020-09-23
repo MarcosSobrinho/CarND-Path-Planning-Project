@@ -159,6 +159,14 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s,
   return {x,y};
 }
 
+struct MapWaypoints{
+  vector<double> x;
+  vector<double> y;
+  vector<double> s;
+  vector<double> dx;
+  vector<double> dy;
+};
+
 struct LocalizationData{
   double x;
   double y;
@@ -242,10 +250,14 @@ void StartingPoints_Spline(const LocalizationData& car, const PreviousPath& prev
   else{
     ptsx.push_back(prev.x[prev.size-2]);
     ptsx.push_back(prev.x[prev.size-1]);
-    
+
     ptsy.push_back(prev.y[prev.size-2]);
     ptsy.push_back(prev.y[prev.size-1]);
   }
+}
+
+void EndPoints_Spline(){
+
 }
 
 #endif  // HELPERS_H

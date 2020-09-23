@@ -18,11 +18,7 @@ int main() {
   uWS::Hub h;
 
   // Load up map values for waypoint's x,y,s and d normalized normal vectors
-  vector<double> map_waypoints_x;
-  vector<double> map_waypoints_y;
-  vector<double> map_waypoints_s;
-  vector<double> map_waypoints_dx;
-  vector<double> map_waypoints_dy;
+  MapWaypoints map_waypoints;
 
   // Waypoint map to read from
   string map_file_ = "../data/highway_map.csv";
@@ -44,19 +40,18 @@ int main() {
     iss >> s;
     iss >> d_x;
     iss >> d_y;
-    map_waypoints_x.push_back(x);
-    map_waypoints_y.push_back(y);
-    map_waypoints_s.push_back(s);
-    map_waypoints_dx.push_back(d_x);
-    map_waypoints_dy.push_back(d_y);
+    map_waypoints.x.push_back(x);
+    map_waypoints.y.push_back(y);
+    map_waypoints.s.push_back(s);
+    map_waypoints.dx.push_back(d_x);
+    map_waypoints.dy.push_back(d_y);
   }
 
   constexpr double pts_per_s{50.0};
   double ref_vel{0.0};
   double lane = 1.0;
 
-  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,
-               &map_waypoints_dx,&map_waypoints_dy, &ref_vel, &lane]
+  h.onMessage([&map_waypoints, &ref_vel, &lane]
               (uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -132,14 +127,16 @@ int main() {
           vector<double> ptsy;
 
           StartingPoints_Spline(car, prev, ptsx, ptsy);
+          EndPoints_Spline(car, lane, map_waypoints, ptsx, ptsy);
 
           const double ref_yaw = atan2(ptsy[1] - ptsy[0], ptsx[1] - ptsx[0]);
           CoordinateTransform transform(ptsx[1], ptsy[1], ref_yaw);
 
+          /*
           double lane_d = 2.0 + 4.0*lane;
-          auto next_wp0 = getXY(car.s+30.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-          auto next_wp1 = getXY(car.s+60.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-          auto next_wp2 = getXY(car.s+90.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          auto next_wp0 = getXY(car.s+30.0, lane_d, map_waypoints.s, map_waypoints.x, map_waypoints.y);
+          auto next_wp1 = getXY(car.s+60.0, lane_d, map_waypoints.s, map_waypoints.x, map_waypoints.y);
+          auto next_wp2 = getXY(car.s+90.0, lane_d, map_waypoints.s, map_waypoints.x, map_waypoints.y);
 
           ptsx.push_back(next_wp0[0]);
           ptsx.push_back(next_wp1[0]);
@@ -148,6 +145,7 @@ int main() {
           ptsy.push_back(next_wp0[1]);
           ptsy.push_back(next_wp1[1]);
           ptsy.push_back(next_wp2[1]);
+          */
 
           for(int i=0; i < ptsx.size(); ++i) 
           transform.ToVehicleCoord(ptsx[i], ptsy[i]);
