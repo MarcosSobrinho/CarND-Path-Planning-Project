@@ -194,5 +194,28 @@ vector<double> JMT(vector<double> &start, vector<double> &end, double T) {
   return result;
 }
 
+class CoordinateTransform{
+  const double m_x, m_y, m_yaw;
+  public:
+  explicit CoordinateTransform(const double& x, const double& y, const double& yaw) : m_x(x), m_y(y), m_yaw(yaw) {}
+
+  void ToVehicleCoord(double& x, double& y) const {
+    const double x_ = x - m_x;
+    const double y_ = y - m_y;
+
+    x = x_*cos(-m_yaw) - y_*sin(-m_yaw);
+    y = x_*sin(-m_yaw) + y_*cos(-m_yaw);
+  }
+
+  void ToGlobalCoord(double& x, double& y) const {
+    const double x_ = x*cos(m_yaw) - y*sin(m_yaw);
+    const double y_ = x*sin(m_yaw) + y*cos(m_yaw);
+
+    x = x_ + m_x;
+    y = y_ + m_y;
+  }
+
+};
+
 
 #endif  // HELPERS_H

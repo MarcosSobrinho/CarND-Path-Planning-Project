@@ -157,6 +157,8 @@ int main() {
             ptsy.push_back(ref_y);
           }
 
+          CoordinateTransform transform(ref_x, ref_y, ref_yaw);
+
           double lane_d = 2.0 + 4.0*lane;
           auto next_wp0 = getXY(car_s+30.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
           auto next_wp1 = getXY(car_s+60.0, lane_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
@@ -171,11 +173,14 @@ int main() {
           ptsy.push_back(next_wp2[1]);
 
           for(int i=0; i < ptsx.size(); ++i){
+            /*
             double shift_x = ptsx[i] - ref_x;
             double shift_y = ptsy[i] - ref_y;
 
             ptsx[i] = shift_x*cos(-ref_yaw) - shift_y*sin(-ref_yaw);
-            ptsy[i] = shift_x*sin(-ref_yaw) + shift_y*cos(-ref_yaw); 
+            ptsy[i] = shift_x*sin(-ref_yaw) + shift_y*cos(-ref_yaw);
+            */
+           transform.ToVehicleCoord(ptsx[i], ptsy[i]);
           }
 
           tk::spline s;
@@ -199,7 +204,8 @@ int main() {
             double y_point = s(x_point);
 
             x_add_on = x_point;
-
+            
+            /*
             double x_ref = x_point;
             double y_ref = y_point;
 
@@ -208,6 +214,9 @@ int main() {
 
             x_point += ref_x;
             y_point += ref_y;
+            */
+
+            transform.ToGlobalCoord(x_point, y_point);
 
             next_x_vals.push_back(x_point);
             next_y_vals.push_back(y_point);
