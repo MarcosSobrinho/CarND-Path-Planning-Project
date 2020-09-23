@@ -56,7 +56,7 @@ int main() {
   double lane = 1.0;
 
   h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,
-               &map_waypoints_dx,&map_waypoints_dy]
+               &map_waypoints_dx,&map_waypoints_dy, &ref_vel, &lane]
               (uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -106,7 +106,7 @@ int main() {
           for(int i=0; i<sensor_fusion.size(); ++i){
             double d = sensor_fusion[i][6];
             // if car is in my lane, check the speed
-            if((d < (2.0 + 4.0*lane + 2.0)) && ((d > (2.0 + 4.0*lane - 2.0))){
+            if((d < (2.0+4.0*lane+2.0)) && (d > (2.0+4.0*lane-2.0))){
               double vx = sensor_fusion[i][3];
               double vy = sensor_fusion[i][4];
               double check_speed = sqrt(vx*vx+vy*vy);
@@ -120,9 +120,8 @@ int main() {
             }
           }
 
-          if (too_close) dist_inc -= 0.1;
-          else if(dist_inc < 0.45) dist_inc += 0.1;
-          ref_vel = dist_inc*pts_per_s;
+          if (too_close) ref_vel -= 0.1;
+          else if(ref_vel < 22.3) ref_vel += 0.1;
 
           //create space of ref points
           vector<double> ptsx;
