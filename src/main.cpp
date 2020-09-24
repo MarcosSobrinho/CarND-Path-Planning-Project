@@ -51,14 +51,13 @@ int main() {
   // max accel = 10 m/s^2 -> 0.2 speed increment
     
   constexpr int pts_in_traj{50};
-  constexpr double s_per_pt{0.02};
+  constexpr double s_to_pt{0.02};
   constexpr double max_speed{22.3};
   constexpr double max_accel{9.5};
   constexpr double max_jerk{9.5};
 
-  constexpr double max_pt_distance_in_cycle{max_speed * s_per_pt};
-  constexpr double max_speed_change_in_cycle{max_accel * s_per_pt};
-
+  constexpr double max_pt_distance_in_cycle{max_speed * s_to_pt};
+  constexpr double max_speed_change_in_cycle{max_accel * s_to_pt};
 
   double ref_vel{0.0};
   double lane = 1.0;
@@ -120,7 +119,7 @@ int main() {
               double check_speed = sqrt(vx*vx+vy*vy);
               double check_car_s = sensor_fusion[i][5];
 
-              check_car_s += s_per_pt * check_speed * prev.size;
+              check_car_s += s_to_pt * check_speed * prev.size;
               // if speed is smaller than mine, go slower
               if ((check_car_s > car.s) && ((check_car_s - car.s) < 30.0))
               too_close = true;
@@ -128,8 +127,8 @@ int main() {
             }
           }
 
-          if (too_close) ref_vel -= max_speed_change_in_cycle;
-          else if(ref_vel < max_speed) ref_vel += max_speed_change_in_cycle;
+          if (too_close && (ref_vel > check_speed)) ref_vel -= max_speed_change_in_cycle;
+          else if(!too_close && (ref_vel < (max_speed - max_speed_change_in_cycle))) ref_vel += max_speed_change_in_cycle;
 
           //create space of ref points
           vector<double> ptsx;
@@ -154,7 +153,7 @@ int main() {
           double target_y = s(target_x);
           double target_dist = sqrt(target_x*target_x + target_y*target_y);
 
-          double D = target_dist / (s_per_pt * ref_vel);
+          double D = target_dist / (s_to_pt * ref_vel);
           double x_add_on = 0.0;
 
           for (int i=1; i<= pts_in_traj-prev.size; ++i){
