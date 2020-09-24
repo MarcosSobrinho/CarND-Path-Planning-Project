@@ -47,7 +47,19 @@ int main() {
     map_waypoints.dy.push_back(d_y);
   }
 
-  constexpr double pts_per_s{50.0};
+  // max speed = 22.3 m/s -> 0.446 distance increment
+  // max accel = 10 m/s^2 -> 0.2 speed increment
+    
+  constexpr int pts_in_traj{50};
+  constexpr double s_per_pt{0.02};
+  constexpr double max_speed{22.3};
+  constexpr double max_accel{9.5};
+  constexpr double max_jerk{9.5};
+
+  constexpr double max_pt_distance_in_cycle{max_speed * s_per_pt};
+  constexpr double max_speed_change_in_cycle{max_accel * s_per_pt};
+
+
   double ref_vel{0.0};
   double lane = 1.0;
 
@@ -68,7 +80,7 @@ int main() {
         
         if (event == "telemetry") {
           // j[1] is the data JSON object
-          
+
           // Main car's localization Data
           LocalizationData car;
           car.x = j[1]["x"];
@@ -108,7 +120,7 @@ int main() {
               double check_speed = sqrt(vx*vx+vy*vy);
               double check_car_s = sensor_fusion[i][5];
 
-              check_car_s += 0.02 * check_speed * prev.size;
+              check_car_s += s_per_pt * check_speed * prev.size;
               // if speed is smaller than mine, go slower
               if ((check_car_s > car.s) && ((check_car_s - car.s) < 30.0))
               too_close = true;
@@ -116,8 +128,8 @@ int main() {
             }
           }
 
-          if (too_close) ref_vel -= 0.1;
-          else if(ref_vel < 22.3) ref_vel += 0.1;
+          if (too_close) ref_vel -= max_speed_change_in_cycle;
+          else if(ref_vel < max_speed) ref_vel += max_speed_change_in_cycle;
 
           //create space of ref points
           vector<double> ptsx;
@@ -142,10 +154,10 @@ int main() {
           double target_y = s(target_x);
           double target_dist = sqrt(target_x*target_x + target_y*target_y);
 
-          double D = target_dist / (0.02*ref_vel);
+          double D = target_dist / (s_per_pt * ref_vel);
           double x_add_on = 0.0;
 
-          for (int i=1; i<= 50-prev.size; ++i){
+          for (int i=1; i<= pts_in_traj-prev.size; ++i){
 
             double x_point = x_add_on+target_x/D;
             double y_point = s(x_point);
