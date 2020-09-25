@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <array>
 #include "Eigen-3.3/Eigen/Core"
 #include "Eigen-3.3/Eigen/QR"
 #include "helpers.h"
@@ -13,6 +14,7 @@
 using nlohmann::json;
 using std::string;
 using std::vector;
+using std::array;
 
 int main() {
   uWS::Hub h;
@@ -105,12 +107,27 @@ int main() {
 
           json msgJson;
 
-          //const int prev_size = previous_path_x.size();
-
           if(prev.size > 0) car.s = end_path_s;
           bool too_close = false;
           double check_speed{max_speed};
 
+          array<bool, 3> SafeForLaneChange{true, true, true};
+          array<double, 3> LaneSpeed{max_speed, max_speed, max_speed};
+
+          for (auto& car : sensor_fusion){
+            double v = sqrt(car[3]*car[3] + car[4]*car[4]);
+            double s = car[5] + v*prev.size*s_to_pt;
+            double diff_s = s - car.s;
+
+            if((diff_s > -5.0) && (diff_s < 30.0)){
+              double d = car[6];
+              if (diff_s > 0 && (d < (4.0+4.0*lane)) && d > (4.0*lane))
+              too_close = true;
+            }
+
+          }
+
+          /*
           for(int i=0; i<sensor_fusion.size(); ++i){
             double d = sensor_fusion[i][6];
             // if car is in my lane, check the speed
@@ -129,6 +146,7 @@ int main() {
           }
 
           ConsiderLaneChange(too_close, lane);
+          */
 
           if (too_close && (ref_vel > check_speed)) ref_vel -= max_speed_change_in_cycle;
           else if(!too_close && (ref_vel < (max_speed - max_speed_change_in_cycle))) ref_vel += max_speed_change_in_cycle;

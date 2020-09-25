@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string>
 #include <vector>
+#include <array>
 
 #include "Eigen-3.3/Eigen/Core"
 #include "Eigen-3.3/Eigen/QR"
@@ -272,10 +273,10 @@ void EndPoints_Spline(const LocalizationData& car, const double& lane, const Map
   ptsy.push_back(next_wp2[1]);
 }
 
-void ConsiderLaneChange(bool& too_close, double& lane){
-  if(too_close && (lane == 1.0)) lane = 0.0;
-  else if (too_close && (lane == 2.0)) lane = 1.0;
-  else if (too_close && (lane == 0.0)) lane = 1.0;
+void ConsiderLaneChange(bool& too_close, int& lane){
+  if(too_close && (lane == 1)) lane = 0;
+  else if (too_close && (lane == 2)) lane = 1;
+  else if (too_close && (lane == 0)) lane = 1;
   too_close = false;
 }
 
