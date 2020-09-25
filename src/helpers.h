@@ -276,7 +276,7 @@ void ConsiderLaneChange(bool& too_close, double& lane){
   if(too_close && (lane == 1.0)) lane = 0.0;
   else if (too_close && (lane == 2.0)) lane = 1.0;
   else if (too_close && (lane == 0.0)) lane = 1.0;
-  too_close = true;
+  too_close = false;
 }
 
 #endif  // HELPERS_H
