@@ -115,8 +115,12 @@ int main() {
           array<double, 3> LaneSpeed{max_speed, max_speed, max_speed};
 
           for (auto& other_car : sensor_fusion){
-            double v = sqrt(other_car[3]*other_car[3] + other_car[4]*other_car[4]);
-            double s = other_car[5] + v*prev.size*s_to_pt;
+            double vx = other_car[3];
+            double vy = other_car[4];
+            double v = sqrt(vx*vx + vy*vy);
+
+            double s = other_car[5];
+            s += v*prev.size*s_to_pt;
             double diff_s = s - car.s;
 
             if((diff_s > -5.0) && (diff_s < 30.0)){
@@ -124,7 +128,6 @@ int main() {
               if (diff_s > 0 && (d < (4.0+4.0*lane)) && d > (4.0*lane))
               too_close = true;
             }
-
           }
 
           /*
