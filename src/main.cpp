@@ -127,6 +127,8 @@ int main() {
             }
           }
 
+          ConsiderLaneChange(too_close, lane);
+
           if (too_close && (ref_vel > check_speed)) ref_vel -= max_speed_change_in_cycle;
           else if(!too_close && (ref_vel < (max_speed - max_speed_change_in_cycle))) ref_vel += max_speed_change_in_cycle;
 

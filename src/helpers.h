@@ -272,4 +272,11 @@ void EndPoints_Spline(const LocalizationData& car, const double& lane, const Map
   ptsy.push_back(next_wp2[1]);
 }
 
+void ConsiderLaneChange(bool& too_close, double& lane){
+  if(too_close && (lane == 1.0)) lane = 0.0;
+  else if (too_close && (lane == 2.0)) lane = 1.0;
+  else if (too_close && (lane == 0.0)) lane = 1.0;
+  too_close = true;
+}
+
 #endif  // HELPERS_H
