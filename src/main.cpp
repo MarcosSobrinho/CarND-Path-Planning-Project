@@ -109,6 +109,7 @@ int main() {
 
           if(prev.size > 0) car.s = end_path_s;
           bool too_close = false;
+          double check_speed{max_speed};
 
           for(int i=0; i<sensor_fusion.size(); ++i){
             double d = sensor_fusion[i][6];
@@ -116,7 +117,7 @@ int main() {
             if((d < (2.0+4.0*lane+2.0)) && (d > (2.0+4.0*lane-2.0))){
               double vx = sensor_fusion[i][3];
               double vy = sensor_fusion[i][4];
-              double check_speed = sqrt(vx*vx+vy*vy);
+              check_speed = sqrt(vx*vx+vy*vy);
               double check_car_s = sensor_fusion[i][5];
 
               check_car_s += s_to_pt * check_speed * prev.size;
