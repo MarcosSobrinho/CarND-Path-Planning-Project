@@ -114,13 +114,13 @@ int main() {
           array<bool, 3> SafeForLaneChange{true, true, true};
           array<double, 3> LaneSpeed{max_speed, max_speed, max_speed};
 
-          for (auto& car : sensor_fusion){
-            double v = sqrt(car[3]*car[3] + car[4]*car[4]);
-            double s = car[5] + v*prev.size*s_to_pt;
+          for (auto& other_car : sensor_fusion){
+            double v = sqrt(other_car[3]*other_car[3] + other_car[4]*other_car[4]);
+            double s = other_car[5] + v*prev.size*s_to_pt;
             double diff_s = s - car.s;
 
             if((diff_s > -5.0) && (diff_s < 30.0)){
-              double d = car[6];
+              double d = other_car[6];
               if (diff_s > 0 && (d < (4.0+4.0*lane)) && d > (4.0*lane))
               too_close = true;
             }
