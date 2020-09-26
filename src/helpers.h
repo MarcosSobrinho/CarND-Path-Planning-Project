@@ -190,7 +190,7 @@ struct PreviousPath{
   unsigned int size;
 };
 
-EvaluateFusionData(const LocalizationData& car, const SensorFusionData& other_car, array<bool, 3>& too_close, array<double, 3>& LaneSpeed, int lane){
+void EvaluateFusionData(const LocalizationData& car, const SensorFusionData& other_car, array<bool, 3>& too_close, array<double, 3>& LaneSpeed, int lane){
   
   // if car is in my lane
   if( (other_car.d > lane) && (other_car.d < (lane+1.0)) ){
@@ -202,14 +202,14 @@ EvaluateFusionData(const LocalizationData& car, const SensorFusionData& other_ca
   }
   //car is in lane left
   else if( (other_car.d > (lane-1.0)) && (other_car.d < lane) ){
-    if ((other_car.s > (car.s - 5.0)) && ((other_car.s - car.s) < 35.0)){
+    if ((other_car.s > (car.s - 5.0)) && ((other_car.s - car.s) < 30.0)){
       too_close[lane-1] = true;
       if(other_car.v < LaneSpeed[lane-1]) LaneSpeed[lane-1] = other_car.v;
     }
   }
   //car is in the lane right
   else if( (other_car.d > (lane+1.0)) && (other_car.d < (lane+2.0)) ){
-    if ((other_car.s > (car.s - 5.0)) && ((other_car.s - car.s) < 35.0)){
+    if ((other_car.s > (car.s - 5.0)) && ((other_car.s - car.s) < 30.0)){
       too_close[lane+1] = true;
       if(other_car.v < LaneSpeed[lane+1]) LaneSpeed[lane+1] = other_car.v;
     }

@@ -125,31 +125,6 @@ int main() {
             other_car.d *= 0.25;
 
             EvaluateFusionData(car, other_car, too_close, LaneSpeed, lane);
-
-            /*
-            // if car is in my lane
-            if( (d > lane) && (d < (lane+1.0)) ){
-              // if speed is smaller than mine, go slower
-              if ((check_car_s > car.s) && ((check_car_s - car.s) < 30.0)){
-                too_close[lane] = true;
-                if(check_speed < LaneSpeed[lane]) LaneSpeed[lane] = check_speed;
-              }
-            }
-            //car is in lane left
-            else if( (d > (lane-1.0)) && (d < lane) ){
-              if ((check_car_s > (car.s - 5.0)) && ((check_car_s - car.s) < 35.0)){
-                too_close[lane-1] = true;
-                if(check_speed < LaneSpeed[lane-1]) LaneSpeed[lane-1] = check_speed;
-              }
-            }
-            //car is in the lane right
-            else if( (d > (lane+1.0)) && (d < (lane+2.0)) ){
-              if ((check_car_s > (car.s - 5.0)) && ((check_car_s - car.s) < 35.0)){
-                too_close[lane+1] = true;
-                if(check_speed < LaneSpeed[lane+1]) LaneSpeed[lane+1] = check_speed;
-              }
-            }
-            */
           }
 
          if(too_close[lane]) lane = ConsiderLaneChange(too_close, lane);
@@ -164,7 +139,7 @@ int main() {
           EndPoints_Spline(car, lane, map_waypoints, ptsx, ptsy);
 
           const double ref_yaw = atan2(ptsy[1] - ptsy[0], ptsx[1] - ptsx[0]);
-          CoordinateTransform transform(ptsx[1], ptsy[1], ref_yaw);
+          const CoordinateTransform transform(ptsx[1], ptsy[1], ref_yaw);
 
           for(int i=0; i < ptsx.size(); ++i) 
           transform.ToVehicleCoord(ptsx[i], ptsy[i]);
@@ -175,12 +150,12 @@ int main() {
           vector<double> next_x_vals{std::move(prev.x)};
           vector<double> next_y_vals{std::move(prev.y)};
 
-          double target_x = 30.0;
-          double target_y = s(target_x);
-          double target_dist = sqrt(target_x*target_x + target_y*target_y);
+          constexpr target_x{30.0};
+          const double target_y = s(target_x);
+          const double target_dist = sqrt(target_x*target_x + target_y*target_y);
 
-          double D = target_dist / (s_to_pt * ref_vel);
-          double x_add_on = 0.0;
+          const double D = target_dist / (s_to_pt * ref_vel);
+          const double x_add_on = 0.0;
 
           for (int i=1; i<= pts_in_traj-prev.size; ++i){
 
