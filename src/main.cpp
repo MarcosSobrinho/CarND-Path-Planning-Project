@@ -113,15 +113,20 @@ int main() {
           array<bool, 3> too_close{false, false, false};
 
           for(int i=0; i<sensor_fusion.size(); ++i){
+            SensorFusionData other_car;
             const double vx = sensor_fusion[i][3];
             const double vy = sensor_fusion[i][4];
-            const double check_speed = sqrt(vx*vx+vy*vy);
+            other_car.v = sqrt(vx*vx+vy*vy);
 
-            double check_car_s = sensor_fusion[i][5];
-            check_car_s += s_to_pt * check_speed * prev.size;
+            other_car.s = sensor_fusion[i][5];
+            other_car.s += s_to_pt * other_car.v * prev.size;
 
-            double d = sensor_fusion[i][6];
-            d *= 0.25;
+            other_car.d = sensor_fusion[i][6];
+            other_car.d *= 0.25;
+
+            EvaluateFusionData(other_car, too_close, LaneSpeed, lane);
+
+            /*
             // if car is in my lane
             if( (d > lane) && (d < (lane+1.0)) ){
               // if speed is smaller than mine, go slower
@@ -144,6 +149,7 @@ int main() {
                 if(check_speed < LaneSpeed[lane+1]) LaneSpeed[lane+1] = check_speed;
               }
             }
+            */
           }
 
          if(too_close[lane]) lane = ConsiderLaneChange(too_close, lane);
