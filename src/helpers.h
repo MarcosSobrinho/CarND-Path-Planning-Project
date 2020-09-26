@@ -184,41 +184,6 @@ struct PreviousPath{
   unsigned int size;
 };
 
-vector<double> JMT(vector<double> &start, vector<double> &end, double T) {
-  /**
-   * @param start - the vehicles start location given as a length three array
-   *   corresponding to initial values of [s, s_dot, s_double_dot]
-   * @param end - the desired end state for vehicle. Like "start" this is a
-   *   length three array.
-   * @param T - The duration, in seconds, over which this maneuver should occur.
-   *
-   * @output an array of length 6, each value corresponding to a coefficent in 
-   *   the polynomial:
-   *   s(t) = a_0 + a_1 * t + a_2 * t**2 + a_3 * t**3 + a_4 * t**4 + a_5 * t**5
-   */
-  MatrixXd A = MatrixXd(3, 3);
-  A << T*T*T, T*T*T*T, T*T*T*T*T,
-       3*T*T, 4*T*T*T,5*T*T*T*T,
-       6*T, 12*T*T, 20*T*T*T;
-    
-  MatrixXd B = MatrixXd(3,1);     
-  B << end[0]-(start[0]+start[1]*T+.5*start[2]*T*T),
-       end[1]-(start[1]+start[2]*T),
-       end[2]-start[2];
-          
-  //MatrixXd Ai = A.inverse();
-  MatrixXd Ai = A;
-  MatrixXd C = Ai*B;
-  
-  vector <double> result = {start[0], start[1], .5*start[2]};
-
-  for(int i = 0; i < C.size(); ++i) {
-    result.push_back(C.data()[i]);
-  }
-
-  return result;
-}
-
 class CoordinateTransform{
   const double m_x, m_y, m_yaw;
   public:

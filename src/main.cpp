@@ -109,7 +109,6 @@ int main() {
 
           if(prev.size > 0) car.s = end_path_s;
 
-          array<double, 3> OtherCarPos{31.0, 31.0, 31.0};
           array<double, 3> LaneSpeed{max_speed, max_speed, max_speed};
           array<bool, 3> too_close{false, false, false};
 
@@ -146,37 +145,12 @@ int main() {
               }
             }
           }
-          
 
-          /*
-          bool too_close = false;
-          double check_speed{max_speed};
-          
-          for(int i=0; i<sensor_fusion.size(); ++i){
-            double d = sensor_fusion[i][6];
-            // if car is in my lane, check the speed
-            if((d < (2.0+4.0*lane+2.0)) && (d > (2.0+4.0*lane-2.0))){
-              double vx = sensor_fusion[i][3];
-              double vy = sensor_fusion[i][4];
-              check_speed = sqrt(vx*vx+vy*vy);
-              double check_car_s = sensor_fusion[i][5];
-
-              check_car_s += s_to_pt * check_speed * prev.size;
-              // if speed is smaller than mine, go slower
-              if ((check_car_s > car.s) && ((check_car_s - car.s) < 30.0))
-              too_close = true;
-              
-            }
-          }
-
-          ConsiderLaneChange(too_close, lane);
-          */
          if(too_close[lane]) lane = ConsiderLaneChange(too_close, lane);
 
           if (too_close[lane] && (ref_vel > LaneSpeed[lane])) ref_vel -= max_speed_change_in_cycle;
           else if(!too_close[lane] && (ref_vel < (max_speed - max_speed_change_in_cycle))) ref_vel += max_speed_change_in_cycle;
 
-          //create space of ref points
           vector<double> ptsx;
           vector<double> ptsy;
 
