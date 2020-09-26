@@ -12,6 +12,7 @@
 // for convenience
 using std::string;
 using std::vector;
+using std::array;
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -273,10 +274,11 @@ void EndPoints_Spline(const LocalizationData& car, const double& lane, const Map
   ptsy.push_back(next_wp2[1]);
 }
 
-void ConsiderLaneChange(const array<bool, 3>& too_close, int& lane){
+int ConsiderLaneChange(const array<bool, 3>& too_close, int lane){
   if ( (lane == 1) && !too_close[lane+1] ) lane = 2;
   else if ( (lane == 2) && !too_close[lane-1] ) lane = 1;
   else if ( (lane == 0) && !too_close[lane+1] ) lane = 1;
+  return lane;
 }
 
 #endif  // HELPERS_H
