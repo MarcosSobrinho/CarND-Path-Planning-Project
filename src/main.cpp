@@ -132,14 +132,14 @@ int main() {
             }
             //car is in lane left
             else if( (d > (lane-1.0)) && (d < lane) ){
-              if ((check_car_s > (car.s - 3.0)) && ((check_car_s - car.s) < 30.0)){
+              if ((check_car_s > (car.s - 5.0)) && ((check_car_s - car.s) < 35.0)){
                 too_close[lane-1] = true;
                 if(check_speed < LaneSpeed[lane-1]) LaneSpeed[lane-1] = check_speed;
               }
             }
             //car is in the lane right
             else if( (d > (lane+1.0)) && (d < (lane+2.0)) ){
-              if ((check_car_s > (car.s - 3.0)) && ((check_car_s - car.s) < 30.0)){
+              if ((check_car_s > (car.s - 5.0)) && ((check_car_s - car.s) < 35.0)){
                 too_close[lane+1] = true;
                 if(check_speed < LaneSpeed[lane+1]) LaneSpeed[lane+1] = check_speed;
               }
