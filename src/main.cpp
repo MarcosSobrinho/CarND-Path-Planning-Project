@@ -108,29 +108,47 @@ int main() {
           json msgJson;
 
           if(prev.size > 0) car.s = end_path_s;
-          bool too_close = false;
           double check_speed{max_speed};
 
-          array<bool, 3> SafeForLaneChange{true, true, true};
+          array<double, 3> OtherCarPos{31.0, 31.0, 31.0};
           array<double, 3> LaneSpeed{max_speed, max_speed, max_speed};
+          array<bool, 3> too_close{false, false, false};
 
-          for (auto& other_car : sensor_fusion){
-            double vx = other_car[3];
-            double vy = other_car[4];
-            double v = sqrt(vx*vx + vy*vy);
+          for(int i=0; i<sensor_fusion.size(); ++i){
+            const double vx = sensor_fusion[i][3];
+            const double vy = sensor_fusion[i][4];
+            const double check_speed = sqrt(vx*vx+vy*vy);
 
-            double s = other_car[5];
-            s += v*prev.size*s_to_pt;
-            double diff_s = s - car.s;
+            double check_car_s = sensor_fusion[i][5];
+            check_car_s += s_to_pt * check_speed * prev.size;
 
-            if((diff_s > -5.0) && (diff_s < 30.0)){
-              double d = other_car[6];
-              if (diff_s > 0 && (d < (4.0+4.0*lane)) && d > (4.0*lane))
-              too_close = true;
+            double d = sensor_fusion[i][6];
+            d *= 0.25;
+            // if car is in my lane
+            if( (d > lane) && (d < (lane+1.0)) ){
+              // if speed is smaller than mine, go slower
+              if ((check_car_s > car.s) && ((check_car_s - car.s) < 30.0)){
+                too_close[lane] = true;
+              }
+            }
+            //car is in lane left
+            else if( (d > (lane-1.0)) && (d < lane) ){
+              if ((check_car_s > (car.s - 3.0)) && ((check_car_s - car.s) < 30.0)){
+                too_close[lane-1] = true;
+              }
+            }
+            //car is in the lane right
+            else if( (d > (lane+1.0)) && (d < (lane+2.0)) ){
+              if ((check_car_s > (car.s - 3.0)) && ((check_car_s - car.s) < 30.0)){
+                too_close[lane+1] = true;
+              }
             }
           }
+          
 
           /*
+          bool too_close = false;
+          
           for(int i=0; i<sensor_fusion.size(); ++i){
             double d = sensor_fusion[i][6];
             // if car is in my lane, check the speed
@@ -151,8 +169,8 @@ int main() {
           ConsiderLaneChange(too_close, lane);
           */
 
-          if (too_close && (ref_vel > check_speed)) ref_vel -= max_speed_change_in_cycle;
-          else if(!too_close && (ref_vel < (max_speed - max_speed_change_in_cycle))) ref_vel += max_speed_change_in_cycle;
+          if (too_close[lane] && (ref_vel > check_speed)) ref_vel -= max_speed_change_in_cycle;
+          else if(!too_close[lane] && (ref_vel < (max_speed - max_speed_change_in_cycle))) ref_vel += max_speed_change_in_cycle;
 
           //create space of ref points
           vector<double> ptsx;
