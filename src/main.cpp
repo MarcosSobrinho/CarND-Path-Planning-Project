@@ -129,6 +129,7 @@ int main() {
               // if speed is smaller than mine, go slower
               if ((check_car_s > car.s) && ((check_car_s - car.s) < 30.0)){
                 too_close[lane] = true;
+                if(check_speed < LaneSpeed[lane]) LaneSpeed[lane] = check_speed;
               }
             }
             //car is in lane left
@@ -169,7 +170,7 @@ int main() {
           ConsiderLaneChange(too_close, lane);
           */
 
-          if (too_close[lane] && (ref_vel > check_speed)) ref_vel -= max_speed_change_in_cycle;
+          if (too_close[lane] && (ref_vel > LaneSpeed[lane])) ref_vel -= max_speed_change_in_cycle;
           else if(!too_close[lane] && (ref_vel < (max_speed - max_speed_change_in_cycle))) ref_vel += max_speed_change_in_cycle;
 
           //create space of ref points
