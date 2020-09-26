@@ -150,7 +150,7 @@ int main() {
           vector<double> next_x_vals{std::move(prev.x)};
           vector<double> next_y_vals{std::move(prev.y)};
 
-          constexpr target_x{30.0};
+          constexpr double target_x{30.0};
           const double target_y = s(target_x);
           const double target_dist = sqrt(target_x*target_x + target_y*target_y);
 
