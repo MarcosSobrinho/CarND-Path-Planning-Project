@@ -108,7 +108,7 @@ int main() {
           json msgJson;
 
           if(prev.size > 0) car.s = end_path_s;
-          double check_speed{max_speed};
+          //double check_speed{max_speed};
 
           array<double, 3> OtherCarPos{31.0, 31.0, 31.0};
           array<double, 3> LaneSpeed{max_speed, max_speed, max_speed};
@@ -136,12 +136,14 @@ int main() {
             else if( (d > (lane-1.0)) && (d < lane) ){
               if ((check_car_s > (car.s - 3.0)) && ((check_car_s - car.s) < 30.0)){
                 too_close[lane-1] = true;
+                if(check_speed < LaneSpeed[lane-1]) LaneSpeed[lane-1] = check_speed;
               }
             }
             //car is in the lane right
             else if( (d > (lane+1.0)) && (d < (lane+2.0)) ){
               if ((check_car_s > (car.s - 3.0)) && ((check_car_s - car.s) < 30.0)){
                 too_close[lane+1] = true;
+                if(check_speed < LaneSpeed[lane+1]) LaneSpeed[lane+1] = check_speed;
               }
             }
           }
@@ -169,6 +171,7 @@ int main() {
 
           ConsiderLaneChange(too_close, lane);
           */
+         if(too_close[lane]) ConsiderLaneChange(too_close, lane);
 
           if (too_close[lane] && (ref_vel > LaneSpeed[lane])) ref_vel -= max_speed_change_in_cycle;
           else if(!too_close[lane] && (ref_vel < (max_speed - max_speed_change_in_cycle))) ref_vel += max_speed_change_in_cycle;
