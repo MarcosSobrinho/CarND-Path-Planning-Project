@@ -48,15 +48,11 @@ int main() {
     map_waypoints.dx.push_back(d_x);
     map_waypoints.dy.push_back(d_y);
   }
-
-  // max speed = 22.3 m/s -> 0.446 distance increment
-  // max accel = 10 m/s^2 -> 0.2 speed increment
     
   constexpr int pts_in_traj{50};
   constexpr double s_to_pt{0.02};
   constexpr double max_speed{22.3};
   constexpr double max_accel{9.5};
-  constexpr double max_jerk{9.5};
 
   constexpr double max_pt_distance_in_cycle{max_speed * s_to_pt};
   constexpr double max_speed_change_in_cycle{max_accel * s_to_pt};
