@@ -124,7 +124,7 @@ int main() {
             other_car.d = sensor_fusion[i][6];
             other_car.d *= 0.25;
 
-            EvaluateFusionData(other_car, too_close, LaneSpeed, lane);
+            EvaluateFusionData(car, other_car, too_close, LaneSpeed, lane);
 
             /*
             // if car is in my lane
