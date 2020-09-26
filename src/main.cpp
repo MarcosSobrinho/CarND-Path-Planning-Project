@@ -155,7 +155,7 @@ int main() {
           const double target_dist = sqrt(target_x*target_x + target_y*target_y);
 
           const double D = target_dist / (s_to_pt * ref_vel);
-          const double x_add_on = 0.0;
+          double x_add_on = 0.0;
 
           for (int i=1; i<= pts_in_traj-prev.size; ++i){
 
