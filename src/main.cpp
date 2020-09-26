@@ -108,7 +108,6 @@ int main() {
           json msgJson;
 
           if(prev.size > 0) car.s = end_path_s;
-          //double check_speed{max_speed};
 
           array<double, 3> OtherCarPos{31.0, 31.0, 31.0};
           array<double, 3> LaneSpeed{max_speed, max_speed, max_speed};
@@ -151,6 +150,7 @@ int main() {
 
           /*
           bool too_close = false;
+          double check_speed{max_speed};
           
           for(int i=0; i<sensor_fusion.size(); ++i){
             double d = sensor_fusion[i][6];

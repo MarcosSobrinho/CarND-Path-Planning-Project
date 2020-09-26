@@ -275,7 +275,10 @@ void EndPoints_Spline(const LocalizationData& car, const double& lane, const Map
 }
 
 int ConsiderLaneChange(const array<bool, 3>& too_close, int lane){
-  if ( (lane == 1) && !too_close[lane+1] ) lane = 2;
+  if (lane == 1) {
+    if      (!too_close[lane+1]) lane = 2;
+    else if (!too_close[lane-1]) lane = 0;
+  }
   else if ( (lane == 2) && !too_close[lane-1] ) lane = 1;
   else if ( (lane == 0) && !too_close[lane+1] ) lane = 1;
   return lane;
